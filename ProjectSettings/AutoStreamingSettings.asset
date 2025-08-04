@@ -1,0 +1,97 @@
+%YAML 1.1
+%TAG !u! tag:yousandi.cn,2023:
+--- !u!1200 &1
+AutoStreamingSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  mSearchMode: 7
+  mCustomSearchFile: 
+  mTextureSearchString: 
+  mMeshSearchString: 
+  mTextures:
+  - serializedVersion: 2
+    onDemandDownload: 0
+    assetPath: Assets/image/0a47e04ed5b921416821b5544dcdc6ba.jpg
+    localFileId: 2800000
+    rtMem: 293232
+    warningFlag: 0
+    refs:
+    - 0
+    maxPlaceholderSize: 196640
+    width: 736
+    height: 890
+    abSize: 0
+  - serializedVersion: 2
+    onDemandDownload: 0
+    assetPath: Packages/com.unity.render-pipelines.core/Runtime/Debugging/Prefabs/Textures/White1px.png
+    localFileId: 2800000
+    rtMem: 3
+    warningFlag: 0
+    refs:
+    - res
+    maxPlaceholderSize: 196640
+    width: 1
+    height: 1
+    abSize: 0
+  - serializedVersion: 2
+    onDemandDownload: 0
+    assetPath: Packages/com.unity.render-pipelines.core/Runtime/Debugging/Prefabs/Textures/UIElement8px.png
+    localFileId: 2800000
+    rtMem: 256
+    warningFlag: 0
+    refs:
+    - res
+    maxPlaceholderSize: 196640
+    width: 8
+    height: 8
+    abSize: 0
+  - serializedVersion: 2
+    onDemandDownload: 0
+    assetPath: Packages/com.unity.render-pipelines.core/Runtime/Debugging/Prefabs/Textures/UICheckMark.png
+    localFileId: 2800000
+    rtMem: 484
+    warningFlag: 0
+    refs:
+    - res
+    maxPlaceholderSize: 196640
+    width: 11
+    height: 11
+    abSize: 0
+  - serializedVersion: 2
+    onDemandDownload: 0
+    assetPath: Packages/com.unity.render-pipelines.core/Runtime/Debugging/Prefabs/Textures/UIFoldoutOpened.png
+    localFileId: 2800000
+    rtMem: 484
+    warningFlag: 0
+    refs:
+    - res
+    maxPlaceholderSize: 196640
+    width: 11
+    height: 11
+    abSize: 0
+  - serializedVersion: 2
+    onDemandDownload: 0
+    assetPath: Packages/com.unity.render-pipelines.core/Runtime/Debugging/Prefabs/Textures/UIFoldoutClosed.png
+    localFileId: 2800000
+    rtMem: 484
+    warningFlag: 0
+    refs:
+    - res
+    maxPlaceholderSize: 196640
+    width: 11
+    height: 11
+    abSize: 0
+  mAudios: []
+  mMeshes: []
+  mAnimations: []
+  mSharedSceneAssets: []
+  mScenes: []
+  mConfigCCD:
+    useCCD: 0
+    uosSecret: 
+    uosAppid: 
+    bucketUuid: 
+    bucketName: 
+    badgeName: 
+    ttAppid: 
+    targetPlatfrom: 

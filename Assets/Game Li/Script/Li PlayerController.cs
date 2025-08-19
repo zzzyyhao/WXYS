@@ -9,54 +9,67 @@ public class PlayerController : MonoBehaviour
     public bool keepYAxisFixed = true; // 勾选框：是否保持Y轴不变
 
     private LiGameManager gameManager;
+    
+    // 缓存组件引用，避免重复查找
+    private Camera mainCamera;
+    private Vector3 tempMousePos = Vector3.zero; // 重用Vector3，避免GC
+    private Vector3 tempWorldPos = Vector3.zero; // 重用Vector3，避免GC
+    private Vector3 tempNewPos = Vector3.zero; // 重用Vector3，避免GC
 
     void Start()
     {
         gameManager = FindObjectOfType<LiGameManager>();
+        
+        // 缓存相机引用
+        mainCamera = Camera.main;
+        if (mainCamera == null)
+        {
+            mainCamera = FindObjectOfType<Camera>();
+        }
     }
 
     void Update()
     {
-        // 获取相机边界
-        float halfWidth = Camera.main.orthographicSize * Camera.main.aspect;
+        // 获取相机边界 - 使用缓存的相机引用
+        float halfWidth = mainCamera.orthographicSize * mainCamera.aspect;
         float leftLimit = -halfWidth;
         float rightLimit = halfWidth;
 
-        // 获取鼠标在世界坐标中的位置，添加边界检查
-        Vector3 mousePos = Input.mousePosition;
+        // 获取鼠标在世界坐标中的位置，添加边界检查 - 重用Vector3避免GC
+        tempMousePos.Set(Input.mousePosition.x, Input.mousePosition.y, Input.mousePosition.z);
         
         // 检查鼠标位置是否有效
-        if (float.IsInfinity(mousePos.x) || float.IsInfinity(mousePos.y) || 
-            float.IsNaN(mousePos.x) || float.IsNaN(mousePos.y))
+        if (float.IsInfinity(tempMousePos.x) || float.IsInfinity(tempMousePos.y) || 
+            float.IsNaN(tempMousePos.x) || float.IsNaN(tempMousePos.y))
         {
             return; // 如果鼠标位置无效，直接返回
         }
         
         // 确保鼠标在屏幕范围内
-        mousePos.x = Mathf.Clamp(mousePos.x, 0, Screen.width);
-        mousePos.y = Mathf.Clamp(mousePos.y, 0, Screen.height);
+        tempMousePos.x = Mathf.Clamp(tempMousePos.x, 0, Screen.width);
+        tempMousePos.y = Mathf.Clamp(tempMousePos.y, 0, Screen.height);
         
-        Vector3 worldPos = Camera.main.ScreenToWorldPoint(mousePos);
+        tempWorldPos = mainCamera.ScreenToWorldPoint(tempMousePos);
 
-        // 根据勾选框设置位置
-        Vector3 newPos = transform.position;
-        newPos.x = Mathf.Clamp(worldPos.x, leftLimit, rightLimit);
+        // 根据勾选框设置位置 - 重用Vector3避免GC
+        tempNewPos.Set(transform.position.x, transform.position.y, transform.position.z);
+        tempNewPos.x = Mathf.Clamp(tempWorldPos.x, leftLimit, rightLimit);
         
         if (keepYAxisFixed)
         {
             // 保持Y轴不变
-            newPos.y = transform.position.y;
+            tempNewPos.y = transform.position.y;
         }
         else
         {
             // Y轴跟随鼠标
-            newPos.y = worldPos.y;
+            tempNewPos.y = tempWorldPos.y;
         }
         
         // Z轴始终保持不变
-        newPos.z = transform.position.z;
+        tempNewPos.z = transform.position.z;
         
-        transform.position = newPos;
+        transform.position = tempNewPos;
     }
 
     void OnCollisionEnter2D(Collision2D collision)

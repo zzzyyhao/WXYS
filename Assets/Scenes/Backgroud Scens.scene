@@ -226,10 +226,10 @@ GameObject:
   serializedVersion: 7
   m_Component:
   - component: {fileID: 519420032}
-  - component: {fileID: 519420031}
-  - component: {fileID: 519420029}
   - component: {fileID: 519420030}
   - component: {fileID: 519420033}
+  - component: {fileID: 519420031}
+  - component: {fileID: 519420029}
   m_Layer: 0
   m_HasEditorInfo: 1
   m_Name: Main Camera
@@ -1005,7 +1005,7 @@ GameObject:
   - component: {fileID: 2047464400}
   m_Layer: 5
   m_HasEditorInfo: 1
-  m_Name: UI Canvas
+  m_Name: UI Canvas - BG
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

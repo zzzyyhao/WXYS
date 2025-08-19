@@ -407,16 +407,24 @@ public class LiGameManager : MonoBehaviour
         }
     }
 
+    // 缓存Spawner组件，避免重复查找
+    private LiSpawner cachedSpawner;
+    private Vector3 tempSpawnPosition = Vector3.zero; // 重用Vector3，避免GC
+    
     void SpawnFirstPrefab()
     {
         if (firstPrefab == null) return;
 
-        // 获取Spawner的位置和宽度（假设Spawner在场景中）
-        LiSpawner spawner = FindObjectOfType<LiSpawner>();
-        if (spawner != null)
+        // 缓存Spawner组件，避免重复查找
+        if (cachedSpawner == null)
+        {
+            cachedSpawner = FindObjectOfType<LiSpawner>();
+        }
+        
+        if (cachedSpawner != null)
         {
             // 使用Spawner的生成逻辑
-            GameObject first = spawner.SpawnSpecificPrefab(firstPrefab);
+            GameObject first = cachedSpawner.SpawnSpecificPrefab(firstPrefab);
             if (first != null)
             {
                 SetupFirstMovement(first);
@@ -424,10 +432,10 @@ public class LiGameManager : MonoBehaviour
         }
         else
         {
-            // 备用生成逻辑
+            // 备用生成逻辑 - 重用Vector3避免GC
             float randomX = Random.Range(-8f, 8f);
-            Vector3 spawnPosition = new Vector3(randomX, 10f, 0f);
-            GameObject first = Instantiate(firstPrefab, spawnPosition, Quaternion.identity);
+            tempSpawnPosition.Set(randomX, 10f, 0f);
+            GameObject first = Instantiate(firstPrefab, tempSpawnPosition, Quaternion.identity);
             
             SetupFirstMovement(first);
         }
@@ -523,10 +531,18 @@ public class LiGameManager : MonoBehaviour
         }
     }
 
+    // 缓存Layer索引，避免重复查找
+    private int fallingLayerIndex = -1;
+    private Vector2 tempVelocity = Vector2.zero; // 重用Vector2，避免GC
+    
     void SetupFirstMovement(GameObject first)
     {
-        // 设置Layer为"Falling"
-        first.layer = LayerMask.NameToLayer("Falling");
+        // 缓存Layer索引，避免重复查找
+        if (fallingLayerIndex == -1)
+        {
+            fallingLayerIndex = LayerMask.NameToLayer("Falling");
+        }
+        first.layer = fallingLayerIndex;
         
         // 获取或添加Rigidbody2D
         Rigidbody2D rb = first.GetComponent<Rigidbody2D>();
@@ -541,28 +557,27 @@ public class LiGameManager : MonoBehaviour
         rb.angularDrag = 0f; // 关闭角阻力
         
         // 根据当前阶段设置不同的下落速度
-        float fallSpeed = 2f;
-        switch (currentGameStage)
-        {
-            case 1:
-                fallSpeed = stage1FirstFallSpeed;
-                break;
-            case 2:
-                fallSpeed = stage2FirstFallSpeed;
-                break;
-            case 3:
-                fallSpeed = stage3FirstFallSpeed;
-                break;
-            case 4:
-                fallSpeed = stage4CurrentFirstFallSpeed;
-                break;
-        }
+        float fallSpeed = GetFirstFallSpeed();
         
-        // 设置恒定下落速度
-        rb.velocity = Vector2.down * fallSpeed;
+        // 重用Vector2避免GC
+        tempVelocity.Set(0f, -fallSpeed);
+        rb.velocity = tempVelocity;
         
         // 设置自动销毁（恒定值500秒）
         Destroy(first, 500f);
+    }
+    
+    // 获取First预制体的下落速度
+    private float GetFirstFallSpeed()
+    {
+        switch (currentGameStage)
+        {
+            case 1: return stage1FirstFallSpeed;
+            case 2: return stage2FirstFallSpeed;
+            case 3: return stage3FirstFallSpeed;
+            case 4: return stage4CurrentFirstFallSpeed;
+            default: return 2f;
+        }
     }
 
     void SetupSecondMovement(GameObject second)

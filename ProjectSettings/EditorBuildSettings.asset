@@ -11,6 +11,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Game Li.scene
     guid: 37522878bb853bf449be8c2184e287e3
+  - enabled: 1
+    path: Assets/Scenes/Game Grandma.scene
+    guid: e57bdda1683696149a9cfdd92e13ac7c
+  - enabled: 1
+    path: Assets/Scenes/Game Jia Bao.scene
+    guid: 52f8ef16f41830749a22826c7660cf6b
+  - enabled: 1
+    path: Assets/Scenes/Game Student.scene
+    guid: 19542aacbcd94594eaa9f562f68cc7b3
   m_BuildProfiles:
   - enabled: 0
     packaged: 0

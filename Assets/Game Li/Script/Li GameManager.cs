@@ -8,7 +8,6 @@ public class LiGameManager : MonoBehaviour
     public GameObject firstPrefab; // 拖拽first预制体到这里
     public GameObject secondPrefab; // 拖拽second预制体到这里
     public GameObject thirdPrefab; // 拖拽third预制体到这里
-    public GameObject fourthPrefab; // 拖拽fourth预制体到这里
 
     [Header("---------------第一阶段参数---------------")]
     [Header("First预制体 - 1")]
@@ -22,12 +21,6 @@ public class LiGameManager : MonoBehaviour
     public float stage1ThirdSpawnDelay = 0.5f;
     public float stage1ThirdSpawnInterval = 4f;
     public float stage1ThirdFallSpeed = 3.5f;
-
-    [Header("Fourth预制体 - 1")]
-    public bool useFourthInStage1 = false; // 是否在第一阶段使用fourth预制体
-    public float stage1FourthSpawnDelay = 0.5f;
-    public float stage1FourthSpawnInterval = 4f;
-    public float stage1FourthFallSpeed = 2.5f;
 
     [Header("第一阶段游戏任务")]
     public int stage1FirstDestroyCount = 5; // 第一阶段需要销毁多少个first预制体才能进入第二阶段
@@ -52,12 +45,6 @@ public class LiGameManager : MonoBehaviour
     public float stage2ThirdSpawnInterval = 3.5f;
     public float stage2ThirdFallSpeed = 4f;
 
-    [Header("Fourth预制体 - 2")]
-    public bool useFourthInStage2 = false; // 是否在第二阶段使用fourth预制体
-    public float stage2FourthSpawnDelay = 0.5f;
-    public float stage2FourthSpawnInterval = 5f;
-    public float stage2FourthFallSpeed = 3f;
-
     [Header("第二阶段游戏任务")]
     public int stage2FirstDestroyCount = 5; // 第二阶段需要销毁多少个first预制体
     public int stage2SecondDestroyCount = 5; // 第二阶段需要销毁多少个second预制体
@@ -81,12 +68,6 @@ public class LiGameManager : MonoBehaviour
     public float stage3ThirdSpawnDelay = 0.5f;
     public float stage3ThirdSpawnInterval = 4f;
     public float stage3ThirdFallSpeed = 3.5f;
-
-    [Header("Fourth预制体 - 3")]
-    public bool useFourthInStage3 = false; // 是否在第三阶段使用fourth预制体
-    public float stage3FourthSpawnDelay = 0.5f;
-    public float stage3FourthSpawnInterval = 6f;
-    public float stage3FourthFallSpeed = 4f;
 
     [Header("第三阶段游戏任务")]
     public int stage3FirstDestroyCount = 5; // 第三阶段需要销毁多少个first预制体
@@ -127,17 +108,6 @@ public class LiGameManager : MonoBehaviour
     public float stage4ThirdSpawnIntervalIncrement = 0.1f; // third预制体生成间隔递增
     public float stage4ThirdFallSpeedIncrement = 0.2f; // third预制体下落速度递增
 
-    [Header("Fourth预制体 - 4")]
-    public bool useFourthInStage4 = true; // 是否在第四阶段使用fourth预制体
-    public float stage4FourthSpawnDelay = 0.5f;
-    public float stage4FourthSpawnInterval = 4f;
-    public float stage4FourthFallSpeed = 4.5f;
-
-    [Header("Fourth预制体递增配置")]
-    public float stage4FourthSpawnDelayIncrement = 0.1f; // fourth预制体生成延迟递增
-    public float stage4FourthSpawnIntervalIncrement = 0.1f; // fourth预制体生成间隔递增
-    public float stage4FourthFallSpeedIncrement = 0.2f; // fourth预制体下落速度递增
-
     [Header("第四阶段任务递增配置")]
     public int stage4FirstBaseCount = 8; // 第四阶段first预制体基础目标数量
     public int stage4SecondBaseCount = 8; // 第四阶段second预制体基础目标数量
@@ -157,7 +127,6 @@ public class LiGameManager : MonoBehaviour
     public int secondDestroyedCount = 0; // 已销毁的second数量（只记录PlayerController销毁的）
     public bool secondSpawnEnabled = false; // 是否启用second生成
     public bool thirdSpawnEnabled = false; // 是否启用third生成
-    public bool fourthSpawnEnabled = false; // 是否启用fourth生成
     public int currentGameStage = 1; // 当前游戏阶段：1=第一阶段，2=第二阶段，3=第三阶段，4=第四阶段（无尽模式）
 
     // 第四阶段动态目标
@@ -180,11 +149,6 @@ public class LiGameManager : MonoBehaviour
     public float stage4CurrentThirdSpawnInterval = 3f;
     public float stage4CurrentThirdFallSpeed = 4f;
 
-    [Header("预制体4参数")]
-    public float stage4CurrentFourthSpawnDelay = 0.5f;
-    public float stage4CurrentFourthSpawnInterval = 4f;
-    public float stage4CurrentFourthFallSpeed = 4.5f;
-
     // 第四阶段速度恢复相关
     [Header("第四阶段速度恢复相关")]
     public bool stage4SpeedRecoveryActive = false;
@@ -192,23 +156,16 @@ public class LiGameManager : MonoBehaviour
     public float stage4TargetFirstFallSpeed = 3.5f;
     public float stage4TargetSecondFallSpeed = 3.5f;
     public float stage4TargetThirdFallSpeed = 4f;
-    public float stage4TargetFourthFallSpeed = 4.5f;
-
-    [Header("---------------特殊计数---------------")]
-    public int thirdDestroyedCount = 0; // third预制体被PlayerController销毁的数量
-    public int fourthDestroyedCount = 0; // fourth预制体被PlayerController销毁的数量
-    public int thirdGameOverCount = 0; // third预制体导致游戏结束的计数
-
-    [Header("---------------调试信息---------------")]
-    [SerializeField] private string debugInfo = "等待游戏开始...";
 
     [Header("UI引用")]
     public LiUIManager uiManager; // UI管理器引用
+    
+    [Header("特殊计数管理器引用")]
+    public LiLetterNumber letterNumberManager; // 特殊计数管理器引用
 
     private float firstSpawnTimer = 0f;
     private float secondSpawnTimer = 0f;
     private float thirdSpawnTimer = 0f;
-    private float fourthSpawnTimer = 0f;
 
     void Start()
     {
@@ -235,12 +192,6 @@ public class LiGameManager : MonoBehaviour
                 ManageThirdSpawn();
             }
             
-            // 管理fourth预制体生成（根据勾选框决定）
-            if (fourthSpawnEnabled)
-            {
-                ManageFourthSpawn();
-            }
-            
             // 第四阶段速度恢复逻辑
             if (currentGameStage == 4 && stage4SpeedRecoveryActive)
             {
@@ -255,13 +206,11 @@ public class LiGameManager : MonoBehaviour
         currentScore = 0;
         firstDestroyedCount = 0;
         secondDestroyedCount = 0;
-        thirdDestroyedCount = 0;
-        fourthDestroyedCount = 0;
-        thirdGameOverCount = 0;
-        secondSpawnEnabled = false;
-        thirdSpawnEnabled = false; // 初始化为false，根据勾选框决定
-        fourthSpawnEnabled = false;
         currentGameStage = 1;
+        
+        // 禁用second和third预制体生成（第一阶段只生成first）
+        secondSpawnEnabled = false;
+        thirdSpawnEnabled = false;
         
         // 初始化第四阶段目标
         stage4CurrentTarget = 1;
@@ -278,9 +227,6 @@ public class LiGameManager : MonoBehaviour
         stage4CurrentThirdSpawnDelay = stage4ThirdSpawnDelay;
         stage4CurrentThirdSpawnInterval = stage4ThirdSpawnInterval;
         stage4CurrentThirdFallSpeed = stage4ThirdFallSpeed;
-        stage4CurrentFourthSpawnDelay = stage4FourthSpawnDelay;
-        stage4CurrentFourthSpawnInterval = stage4FourthSpawnInterval;
-        stage4CurrentFourthFallSpeed = stage4FourthFallSpeed;
         
         // 初始化速度恢复相关
         stage4SpeedRecoveryActive = false;
@@ -288,17 +234,14 @@ public class LiGameManager : MonoBehaviour
         stage4TargetFirstFallSpeed = stage4FirstFallSpeed;
         stage4TargetSecondFallSpeed = stage4SecondFallSpeed;
         stage4TargetThirdFallSpeed = stage4ThirdFallSpeed;
-        stage4TargetFourthFallSpeed = stage4FourthFallSpeed;
         
         // 重置生成计时器
         firstSpawnTimer = stage1FirstSpawnDelay;
         secondSpawnTimer = stage2SecondSpawnDelay;
         thirdSpawnTimer = GetThirdSpawnDelay();
-        fourthSpawnTimer = GetFourthSpawnDelay();
         
-        // 检查是否启用third和fourth预制体
+        // 检查是否启用third预制体
         CheckThirdSpawnEnabled();
-        CheckFourthSpawnEnabled();
         
         // 查找UI管理器
         if (uiManager == null)
@@ -306,8 +249,21 @@ public class LiGameManager : MonoBehaviour
             uiManager = FindObjectOfType<LiUIManager>();
         }
         
-        // 更新调试信息
-        UpdateDebugInfo();
+        // 查找特殊计数管理器
+        if (letterNumberManager == null)
+        {
+            letterNumberManager = FindObjectOfType<LiLetterNumber>();
+        }
+        
+        // 重置特殊计数
+        if (letterNumberManager != null)
+        {
+            letterNumberManager.ResetSpecialCounts();
+        }
+        
+        Debug.Log("LiGameManager: 游戏初始化完成，当前阶段: " + currentGameStage + 
+                  ", secondSpawnEnabled: " + secondSpawnEnabled + 
+                  ", thirdSpawnEnabled: " + thirdSpawnEnabled);
     }
 
     void ManageFirstSpawn()
@@ -388,22 +344,6 @@ public class LiGameManager : MonoBehaviour
                     thirdSpawnTimer = stage4CurrentThirdSpawnInterval;
                     break;
             }
-        }
-    }
-
-    void ManageFourthSpawn()
-    {
-        if (!fourthSpawnEnabled)
-        {
-            return;
-        }
-        
-        fourthSpawnTimer -= Time.deltaTime;
-        
-        if (fourthSpawnTimer <= 0f)
-        {
-            SpawnFourthPrefab();
-            fourthSpawnTimer = GetFourthSpawnInterval();
         }
     }
 
@@ -498,36 +438,6 @@ public class LiGameManager : MonoBehaviour
             GameObject third = Instantiate(thirdPrefab, spawnPosition, Quaternion.identity);
             
             SetupThirdMovement(third);
-        }
-    }
-
-    void SpawnFourthPrefab()
-    {
-        if (fourthPrefab == null) 
-        {
-            // Fourth预制体未赋值！请在Inspector中拖拽Fourth预制体到fourthPrefab字段
-            return;
-        }
-
-        // 获取Spawner的位置和宽度
-        LiSpawner spawner = FindObjectOfType<LiSpawner>();
-        if (spawner != null)
-        {
-            // 使用Spawner的生成逻辑
-            GameObject fourth = spawner.SpawnSpecificPrefab(fourthPrefab);
-            if (fourth != null)
-            {
-                SetupFourthMovement(fourth);
-            }
-        }
-        else
-        {
-            // 备用生成逻辑
-            float randomX = Random.Range(-8f, 8f);
-            Vector3 spawnPosition = new Vector3(randomX, 10f, 0f);
-            GameObject fourth = Instantiate(fourthPrefab, spawnPosition, Quaternion.identity);
-            
-            SetupFourthMovement(fourth);
         }
     }
 
@@ -661,48 +571,6 @@ public class LiGameManager : MonoBehaviour
         Destroy(third, 500f);
     }
 
-    void SetupFourthMovement(GameObject fourth)
-    {
-        // 设置Layer为"Falling"
-        fourth.layer = LayerMask.NameToLayer("Falling");
-        
-        // 获取或添加Rigidbody2D
-        Rigidbody2D rb = fourth.GetComponent<Rigidbody2D>();
-        if (rb == null)
-        {
-            rb = fourth.AddComponent<Rigidbody2D>();
-        }
-
-        // 设置Rigidbody2D属性
-        rb.gravityScale = 0f; // 关闭重力，实现匀速下落
-        rb.drag = 0f; // 关闭阻力
-        rb.angularDrag = 0f; // 关闭角阻力
-        
-        // 根据当前阶段设置不同的下落速度
-        float fallSpeed = 2.5f; // 使用stage1FourthFallSpeed
-        switch (currentGameStage)
-        {
-            case 1:
-                fallSpeed = stage1FourthFallSpeed;
-                break;
-            case 2:
-                fallSpeed = stage2FourthFallSpeed;
-                break;
-            case 3:
-                fallSpeed = stage3FourthFallSpeed;
-                break;
-            case 4:
-                fallSpeed = stage4CurrentFourthFallSpeed;
-                break;
-        }
-        
-        // 设置恒定下落速度
-        rb.velocity = Vector2.down * fallSpeed;
-        
-        // 设置自动销毁（恒定值500秒）
-        Destroy(fourth, 500f);
-    }
-
     // 获取third预制体的生成延迟
     float GetThirdSpawnDelay()
     {
@@ -739,42 +607,6 @@ public class LiGameManager : MonoBehaviour
         }
     }
 
-    // 获取fourth预制体的生成延迟
-    float GetFourthSpawnDelay()
-    {
-        switch (currentGameStage)
-        {
-            case 1:
-                return stage1FourthSpawnDelay;
-            case 2:
-                return stage2FourthSpawnDelay;
-            case 3:
-                return stage3FourthSpawnDelay;
-            case 4:
-                return stage4CurrentFourthSpawnDelay;
-            default:
-                return 0.5f;
-        }
-    }
-
-    // 获取fourth预制体的生成间隔
-    float GetFourthSpawnInterval()
-    {
-        switch (currentGameStage)
-        {
-            case 1:
-                return stage1FourthSpawnInterval;
-            case 2:
-                return stage2FourthSpawnInterval;
-            case 3:
-                return stage3FourthSpawnInterval;
-            case 4:
-                return stage4CurrentFourthSpawnInterval;
-            default:
-                return 4f;
-        }
-    }
-
     // 检查是否启用third预制体生成
     void CheckThirdSpawnEnabled()
     {
@@ -791,26 +623,6 @@ public class LiGameManager : MonoBehaviour
                 break;
             case 4:
                 thirdSpawnEnabled = useThirdInStage4;
-                break;
-        }
-    }
-
-    // 检查是否启用fourth预制体生成
-    void CheckFourthSpawnEnabled()
-    {
-        switch (currentGameStage)
-        {
-            case 1:
-                fourthSpawnEnabled = useFourthInStage1;
-                break;
-            case 2:
-                fourthSpawnEnabled = useFourthInStage2;
-                break;
-            case 3:
-                fourthSpawnEnabled = useFourthInStage3;
-                break;
-            case 4:
-                fourthSpawnEnabled = useFourthInStage4;
                 break;
         }
     }
@@ -857,13 +669,14 @@ public class LiGameManager : MonoBehaviour
         secondSpawnEnabled = true;
         secondSpawnTimer = stage2SecondSpawnDelay;
         
-        // 切换阶段时清零third和fourth的计数
-        thirdDestroyedCount = 0;
-        fourthDestroyedCount = 0;
+        // 重置特殊计数
+        if (letterNumberManager != null)
+        {
+            letterNumberManager.ResetSpecialCounts();
+        }
         
-        // 检查是否启用third和fourth预制体
+        // 检查是否启用third预制体
         CheckThirdSpawnEnabled();
-        CheckFourthSpawnEnabled();
         
         // 如果启用third预制体，更新计时器
         if (thirdSpawnEnabled)
@@ -876,13 +689,14 @@ public class LiGameManager : MonoBehaviour
     {
         currentGameStage = 3;
         
-        // 切换阶段时清零third和fourth的计数
-        thirdDestroyedCount = 0;
-        fourthDestroyedCount = 0;
+        // 重置特殊计数
+        if (letterNumberManager != null)
+        {
+            letterNumberManager.ResetSpecialCounts();
+        }
         
-        // 检查是否启用third和fourth预制体
+        // 检查是否启用third预制体
         CheckThirdSpawnEnabled();
-        CheckFourthSpawnEnabled();
         
         // 如果启用third预制体，更新计时器
         if (thirdSpawnEnabled)
@@ -898,13 +712,16 @@ public class LiGameManager : MonoBehaviour
         // 启用所有预制体生成
         secondSpawnEnabled = true;
         thirdSpawnEnabled = true;
-        fourthSpawnEnabled = true;
         
         // 重置计数
         firstDestroyedCount = 0;
         secondDestroyedCount = 0;
-        thirdDestroyedCount = 0;
-        fourthDestroyedCount = 0;
+        
+        // 重置特殊计数
+        if (letterNumberManager != null)
+        {
+            letterNumberManager.ResetSpecialCounts();
+        }
         
         // 设置初始目标
         stage4CurrentTarget = 1;
@@ -921,28 +738,19 @@ public class LiGameManager : MonoBehaviour
         stage4CurrentThirdSpawnDelay = stage4ThirdSpawnDelay;
         stage4CurrentThirdSpawnInterval = stage4ThirdSpawnInterval;
         stage4CurrentThirdFallSpeed = stage4ThirdFallSpeed;
-        stage4CurrentFourthSpawnDelay = stage4FourthSpawnDelay;
-        stage4CurrentFourthSpawnInterval = stage4FourthSpawnInterval;
-        stage4CurrentFourthFallSpeed = stage4FourthFallSpeed;
         
         // 初始化目标速度
         stage4TargetFirstFallSpeed = stage4FirstFallSpeed;
         stage4TargetSecondFallSpeed = stage4SecondFallSpeed;
         stage4TargetThirdFallSpeed = stage4ThirdFallSpeed;
-        stage4TargetFourthFallSpeed = stage4FourthFallSpeed;
         
         // 重置生成计时器
         firstSpawnTimer = stage4CurrentFirstSpawnDelay;
         secondSpawnTimer = stage4CurrentSecondSpawnDelay;
         thirdSpawnTimer = GetThirdSpawnDelay();
-        fourthSpawnTimer = GetFourthSpawnDelay();
         
-        // 检查是否启用third和fourth预制体
+        // 检查是否启用third预制体
         CheckThirdSpawnEnabled();
-        CheckFourthSpawnEnabled();
-        
-        // 更新调试信息
-        UpdateDebugInfo();
     }
 
     void CompleteStage4Target()
@@ -964,15 +772,11 @@ public class LiGameManager : MonoBehaviour
         stage4CurrentThirdSpawnDelay += stage4ThirdSpawnDelayIncrement;
         stage4CurrentThirdSpawnInterval += stage4ThirdSpawnIntervalIncrement;
         stage4CurrentThirdFallSpeed += stage4ThirdFallSpeedIncrement;
-        stage4CurrentFourthSpawnDelay += stage4FourthSpawnDelayIncrement;
-        stage4CurrentFourthSpawnInterval += stage4FourthSpawnIntervalIncrement;
-        stage4CurrentFourthFallSpeed += stage4FourthFallSpeedIncrement;
         
         // 更新目标速度
         stage4TargetFirstFallSpeed = stage4CurrentFirstFallSpeed;
         stage4TargetSecondFallSpeed = stage4CurrentSecondFallSpeed;
         stage4TargetThirdFallSpeed = stage4CurrentThirdFallSpeed;
-        stage4TargetFourthFallSpeed = stage4CurrentFourthFallSpeed;
         
         // 启动速度恢复机制
         StartStage4SpeedRecovery();
@@ -980,11 +784,12 @@ public class LiGameManager : MonoBehaviour
         // 重置计数
         firstDestroyedCount = 0;
         secondDestroyedCount = 0;
-        thirdDestroyedCount = 0;
-        fourthDestroyedCount = 0;
         
-        // 更新调试信息
-        UpdateDebugInfo();
+        // 重置特殊计数
+        if (letterNumberManager != null)
+        {
+            letterNumberManager.ResetSpecialCounts();
+        }
     }
 
     // 公共方法：记录first被销毁（只由PlayerController调用）
@@ -1005,59 +810,16 @@ public class LiGameManager : MonoBehaviour
         CheckStageTransition();
     }
 
-    // 公共方法：记录third被PlayerController销毁
+    // 公共方法：记录third被PlayerController销毁（委托给LetterNumberManager）
     public void OnThirdDestroyed()
     {
-        thirdDestroyedCount++;
-        
-        // 更新调试信息
-        UpdateDebugInfo();
-        
-        // 检查是否达到游戏结束条件
-        if (thirdDestroyedCount >= 5)
+        if (letterNumberManager != null)
         {
-            thirdGameOverCount++;
-            thirdDestroyedCount = 0; // 重置计数
-            
-            // 更新调试信息
-            UpdateDebugInfo();
-            
-            // 这里可以添加游戏结束逻辑
-            // GameOver();
+            letterNumberManager.OnThirdDestroyed();
         }
     }
 
-    // 公共方法：记录fourth被PlayerController销毁
-    public void OnFourthDestroyed()
-    {
-        fourthDestroyedCount++;
-        
-        // 更新调试信息
-        UpdateDebugInfo();
-        
-        // 检查是否达到增加third计数的条件
-        if (fourthDestroyedCount >= 5)
-        {
-            thirdDestroyedCount++;
-            fourthDestroyedCount = 0; // 重置计数
-            
-            // 更新调试信息
-            UpdateDebugInfo();
-            
-            // 检查是否达到游戏结束条件
-            if (thirdDestroyedCount >= 5)
-            {
-                thirdGameOverCount++;
-                thirdDestroyedCount = 0; // 重置计数
-                
-                // 更新调试信息
-                UpdateDebugInfo();
-                
-                // 这里可以添加游戏结束逻辑
-                // GameOver();
-            }
-        }
-    }
+
 
     // 公共方法：根据预制体类型添加分数
     public void AddScoreByPrefabType(string prefabName)
@@ -1101,8 +863,8 @@ public class LiGameManager : MonoBehaviour
                     break;
             }
         }
-        // third和fourth预制体不计算分数，scoreToAdd保持为0
-        // 注意：blue是third预制体，purple是fourth预制体，它们都不应该加分
+        // third预制体不计算分数，scoreToAdd保持为0
+        // 注意：blue是third预制体，它不应该加分
         
         // 只有当分数大于0时才添加分数
         if (scoreToAdd > 0)
@@ -1130,6 +892,12 @@ public class LiGameManager : MonoBehaviour
 
     public void RestartGame()
     {
+        // 确保游戏处于激活状态
+        isGameActive = true;
+        
+        // 恢复时间缩放
+        Time.timeScale = 1f;
+        
         // 清理现有物体
         GameObject[] fallingObjects = GameObject.FindGameObjectsWithTag("Falling");
         foreach (GameObject obj in fallingObjects)
@@ -1139,6 +907,14 @@ public class LiGameManager : MonoBehaviour
         
         // 重新初始化
         InitializeGame();
+        
+        // 重置UI分数显示
+        if (uiManager != null)
+        {
+            uiManager.ResetScore();
+        }
+        
+        Debug.Log("LiGameManager: 游戏重新开始完成，游戏状态已激活");
     }
 
     // 分数管理
@@ -1151,19 +927,6 @@ public class LiGameManager : MonoBehaviour
         }
     }
 
-    // 更新调试信息
-    void UpdateDebugInfo()
-    {
-        if (currentGameStage == 4)
-        {
-            debugInfo = $"Stage4 Target {stage4CurrentTarget}: First {firstDestroyedCount}/{stage4CurrentFirstTarget}, Second {secondDestroyedCount}/{stage4CurrentSecondTarget}, Third: {thirdDestroyedCount}/5, Fourth: {fourthDestroyedCount}/5, GameOver: {thirdGameOverCount}";
-        }
-        else
-        {
-            debugInfo = $"Third: {thirdDestroyedCount}/5, Fourth: {fourthDestroyedCount}/5, GameOver: {thirdGameOverCount}";
-        }
-    }
-
     // 手动测试方法（用于调试）
     [ContextMenu("测试Third销毁")]
     public void TestThirdDestroyed()
@@ -1171,19 +934,15 @@ public class LiGameManager : MonoBehaviour
         OnThirdDestroyed();
     }
 
-    [ContextMenu("测试Fourth销毁")]
-    public void TestFourthDestroyed()
-    {
-        OnFourthDestroyed();
-    }
+
 
     [ContextMenu("重置特殊计数")]
     public void ResetSpecialCounts()
     {
-        thirdDestroyedCount = 0;
-        fourthDestroyedCount = 0;
-        thirdGameOverCount = 0;
-        UpdateDebugInfo();
+        if (letterNumberManager != null)
+        {
+            letterNumberManager.ResetSpecialCounts();
+        }
     }
 
     [ContextMenu("检查预制体状态")]
@@ -1198,7 +957,6 @@ public class LiGameManager : MonoBehaviour
         stage4CurrentFirstFallSpeed *= (1f - stage4SpeedReductionPercent);
         stage4CurrentSecondFallSpeed *= (1f - stage4SpeedReductionPercent);
         stage4CurrentThirdFallSpeed *= (1f - stage4SpeedReductionPercent);
-        stage4CurrentFourthFallSpeed *= (1f - stage4SpeedReductionPercent);
         
         // 启动速度恢复
         stage4SpeedRecoveryActive = true;
@@ -1218,7 +976,6 @@ public class LiGameManager : MonoBehaviour
             stage4CurrentFirstFallSpeed = stage4TargetFirstFallSpeed;
             stage4CurrentSecondFallSpeed = stage4TargetSecondFallSpeed;
             stage4CurrentThirdFallSpeed = stage4TargetThirdFallSpeed;
-            stage4CurrentFourthFallSpeed = stage4TargetFourthFallSpeed;
             
             stage4SpeedRecoveryActive = false;
         }
@@ -1228,7 +985,6 @@ public class LiGameManager : MonoBehaviour
             stage4CurrentFirstFallSpeed = Mathf.Lerp(stage4CurrentFirstFallSpeed, stage4TargetFirstFallSpeed, Time.deltaTime / stage4SpeedRecoveryTime);
             stage4CurrentSecondFallSpeed = Mathf.Lerp(stage4CurrentSecondFallSpeed, stage4TargetSecondFallSpeed, Time.deltaTime / stage4SpeedRecoveryTime);
             stage4CurrentThirdFallSpeed = Mathf.Lerp(stage4CurrentThirdFallSpeed, stage4TargetThirdFallSpeed, Time.deltaTime / stage4SpeedRecoveryTime);
-            stage4CurrentFourthFallSpeed = Mathf.Lerp(stage4CurrentFourthFallSpeed, stage4TargetFourthFallSpeed, Time.deltaTime / stage4SpeedRecoveryTime);
         }
     }
 }

@@ -6,15 +6,17 @@ public class LiMemoryManager : MonoBehaviour
 {
     [Header("内存优化设置")]
     [SerializeField] private bool enableMemoryOptimization = true;
-    [SerializeField] private float gcInterval = 30f; // 垃圾回收间隔
     [SerializeField] private int maxActiveObjects = 150; // 最大活跃对象数量
-    [SerializeField] private float cleanupInterval = 15f; // 清理间隔
     
     [Header("垃圾回收优化设置")]
     [SerializeField] private bool useAsyncGC = true; // 使用异步垃圾回收
     [SerializeField] private bool useIncrementalGC = true; // 使用增量垃圾回收
     [SerializeField] private int gcFrameBudget = 2; // 每帧垃圾回收预算（毫秒）
     [SerializeField] private bool showGCPerformance = true; // 显示垃圾回收性能信息
+    
+    [Header("事件触发设置")]
+    [SerializeField] private bool gcOnPanelOpen = true; // 面板打开时进行垃圾回收
+    [SerializeField] private bool gcOnSceneTransition = true; // 场景跳转时进行垃圾回收
     
     [Header("对象池设置")]
     [SerializeField] private bool useObjectPooling = true;
@@ -26,9 +28,8 @@ public class LiMemoryManager : MonoBehaviour
     // 缓存
     private List<GameObject> objectsToDestroy = new List<GameObject>();
     
-    // 计时器
-    private float lastGCTime = 0f;
-    private float lastCleanupTime = 0f;
+    // 事件监听状态
+    private bool isListeningForEvents = false;
     
     // 垃圾回收性能监控
     private float lastGCDuration = 0f;
@@ -48,33 +49,15 @@ public class LiMemoryManager : MonoBehaviour
     {
         if (!enableMemoryOptimization) return;
         
-        // 定期垃圾回收
-        if (Time.time - lastGCTime >= gcInterval && !isGCRunning)
+        // 启动事件监听
+        if (!isListeningForEvents)
         {
-            if (useAsyncGC)
-            {
-                StartAsyncGarbageCollection();
-            }
-            else
-            {
-                PerformGarbageCollection();
-            }
-            lastGCTime = Time.time;
-        }
-        
-        // 定期清理
-        if (Time.time - lastCleanupTime >= cleanupInterval)
-        {
-            CleanupExcessiveObjects();
-            lastCleanupTime = Time.time;
+            StartEventListening();
         }
     }
     
     private void InitializeMemoryManager()
     {
-        lastGCTime = Time.time;
-        lastCleanupTime = Time.time;
-        
         // 设置垃圾回收模式
         if (useIncrementalGC)
         {
@@ -302,9 +285,50 @@ public class LiMemoryManager : MonoBehaviour
         }
     }
     
-    // 公共方法：手动垃圾回收
-    public void ManualGarbageCollection()
+    // 启动事件监听
+    private void StartEventListening()
     {
+        isListeningForEvents = true;
+        StartCoroutine(MonitorPanelEvents());
+        Debug.Log("LiMemoryManager: 开始监听面板事件");
+    }
+    
+    // 监听面板事件
+    private IEnumerator MonitorPanelEvents()
+    {
+        while (isListeningForEvents)
+        {
+            // 检查Li Setting面板是否打开
+            GameObject settingPanel = GameObject.Find("Li Setting Instance");
+            if (settingPanel != null && settingPanel.activeInHierarchy)
+            {
+                if (gcOnPanelOpen)
+                {
+                    Debug.Log("LiMemoryManager: 检测到Li Setting面板打开，触发垃圾回收");
+                    TriggerGarbageCollection();
+                }
+            }
+            
+            // 检查Game Over面板是否打开
+            GameObject gameOverPanel = GameObject.Find("Game over Panel");
+            if (gameOverPanel != null && gameOverPanel.activeInHierarchy)
+            {
+                if (gcOnPanelOpen)
+                {
+                    Debug.Log("LiMemoryManager: 检测到Game Over面板打开，触发垃圾回收");
+                    TriggerGarbageCollection();
+                }
+            }
+            
+            yield return new WaitForSeconds(1f); // 每秒检查一次
+        }
+    }
+    
+    // 触发垃圾回收
+    private void TriggerGarbageCollection()
+    {
+        if (isGCRunning) return;
+        
         if (useAsyncGC)
         {
             StartAsyncGarbageCollection();
@@ -313,6 +337,30 @@ public class LiMemoryManager : MonoBehaviour
         {
             PerformGarbageCollection();
         }
+    }
+    
+    // 公共方法：手动垃圾回收
+    public void ManualGarbageCollection()
+    {
+        TriggerGarbageCollection();
+    }
+    
+    // 公共方法：面板打开时触发垃圾回收
+    public void OnPanelOpened(string panelName)
+    {
+        if (!gcOnPanelOpen) return;
+        
+        Debug.Log($"LiMemoryManager: {panelName}面板打开，触发垃圾回收");
+        TriggerGarbageCollection();
+    }
+    
+    // 公共方法：场景跳转时触发垃圾回收
+    public void OnSceneTransition()
+    {
+        if (!gcOnSceneTransition) return;
+        
+        Debug.Log("LiMemoryManager: 场景跳转，触发垃圾回收");
+        TriggerGarbageCollection();
     }
     
     // 公共方法：手动清理对象
@@ -344,11 +392,10 @@ public class LiMemoryManager : MonoBehaviour
     }
     
     // 公共方法：设置优化参数
-    public void SetOptimizationParameters(float gcInterval, int maxObjects, float cleanupInterval)
+    public void SetOptimizationParameters(int maxObjects)
     {
-        this.gcInterval = Mathf.Max(1f, gcInterval);
         this.maxActiveObjects = Mathf.Max(10, maxObjects);
-        this.cleanupInterval = Mathf.Max(1f, cleanupInterval);
+        Debug.Log($"LiMemoryManager: 优化参数已设置 - 最大对象数: {maxObjects}");
     }
     
     // 公共方法：设置垃圾回收参数

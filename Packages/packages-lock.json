@@ -33,6 +33,13 @@
       "source": "local",
       "dependencies": {}
     },
+    "com.magicword.magiclib": {
+      "version": "https://gitee.com/MagicWord/MagicLib_U.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "c4c3ece7a4187c7a3d3f88135c1d8673a10c3cde"
+    },
     "com.qq.weixin.minigame": {
       "version": "https://gitee.com/wechat-minigame/minigame-tuanjie-transform-sdk.git",
       "depth": 0,
@@ -162,6 +169,13 @@
         "com.unity.modules.unityanalytics": "1.0.0",
         "com.unity.nuget.mono-cecil": "1.11.4"
       },
+      "url": "https://packages.tuanjie.cn"
+    },
+    "com.unity.device-simulator.devices": {
+      "version": "1.0.0",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
       "url": "https://packages.tuanjie.cn"
     },
     "com.unity.ext.nunit": {

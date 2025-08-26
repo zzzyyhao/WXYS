@@ -9,11 +9,10 @@ public class LiUIManager : MonoBehaviour
     [Header("UI组件")]
     public TMPro.TextMeshProUGUI scoreText; // 拖拽UI上的Text组件到这里
     public Button settingButton; // 拖拽Setting-Bt按钮到这里
-    public GameObject liSettingPanelPrefab; // 拖拽Li Setting预制体到这里（预制体资产）
+    public GameObject liSettingPanel; // 拖拽场景中已存在的Li Setting面板到这里
     
     private int score = 0;
     private bool isSettingPanelOpen = false;
-    private GameObject liSettingPanelInstance; // 场景中的面板实例
     private LiGameManager gameManager; // 游戏管理器引用
 
     void Start()
@@ -27,49 +26,17 @@ public class LiUIManager : MonoBehaviour
         UpdateScoreText();
         SetupButtonListeners();
         
-        // 实例化设置面板
-        InstantiateSettingPanel();
-        
         // 确保设置面板初始状态为关闭
         EnsureSettingPanelClosed();
     }
 
-    void InstantiateSettingPanel()
-    {
-        if (liSettingPanelPrefab == null)
-        {
-            Debug.LogError("LiUIManager: liSettingPanelPrefab 未设置！请在Inspector中拖拽Li Setting预制体");
-            return;
-        }
 
-        // 查找UI Canvas
-        Canvas uiCanvas = FindObjectOfType<Canvas>();
-        if (uiCanvas == null)
-        {
-            Debug.LogError("LiUIManager: 未找到Canvas！");
-            return;
-        }
-
-        // 实例化设置面板
-        liSettingPanelInstance = Instantiate(liSettingPanelPrefab, uiCanvas.transform);
-        liSettingPanelInstance.name = "Li Setting Instance";
-        
-        // 设置面板位置和大小
-        RectTransform rectTransform = liSettingPanelInstance.GetComponent<RectTransform>();
-        if (rectTransform != null)
-        {
-            rectTransform.anchoredPosition = Vector2.zero;
-            rectTransform.sizeDelta = new Vector2(400, 300);
-            rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
-            rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
-        }
-    }
 
     void EnsureSettingPanelClosed()
     {
-        if (liSettingPanelInstance != null)
+        if (liSettingPanel != null)
         {
-            liSettingPanelInstance.SetActive(false);
+            liSettingPanel.SetActive(false);
             isSettingPanelOpen = false;
         }
     }
@@ -113,15 +80,15 @@ public class LiUIManager : MonoBehaviour
     {
         Debug.Log("LiUIManager: 尝试打开设置面板");
         
-        if (liSettingPanelInstance != null)
+        if (liSettingPanel != null)
         {
-            liSettingPanelInstance.SetActive(true);
+            liSettingPanel.SetActive(true);
             isSettingPanelOpen = true;
             
             Debug.Log("LiUIManager: 设置面板已打开");
             
             // 确保面板在最前面
-            Canvas canvas = liSettingPanelInstance.GetComponentInParent<Canvas>();
+            Canvas canvas = liSettingPanel.GetComponentInParent<Canvas>();
             if (canvas != null)
             {
                 canvas.sortingOrder = 999; // 设置最高层级
@@ -138,16 +105,16 @@ public class LiUIManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("LiUIManager: liSettingPanelInstance 为空！无法打开设置面板");
+            Debug.LogError("LiUIManager: liSettingPanel 为空！无法打开设置面板");
         }
     }
 
     // 关闭设置面板
     public void CloseSettingPanel()
     {
-        if (liSettingPanelInstance != null)
+        if (liSettingPanel != null)
         {
-            liSettingPanelInstance.SetActive(false);
+            liSettingPanel.SetActive(false);
             isSettingPanelOpen = false;
             
             // 恢复游戏
@@ -250,10 +217,10 @@ public class LiUIManager : MonoBehaviour
     {
         isSettingPanelOpen = false;
         
-        // 确保设置面板实例被关闭
-        if (liSettingPanelInstance != null)
+        // 确保设置面板被关闭
+        if (liSettingPanel != null)
         {
-            liSettingPanelInstance.SetActive(false);
+            liSettingPanel.SetActive(false);
         }
         
         // 确保游戏处于激活状态

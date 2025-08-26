@@ -103,6 +103,9 @@ public class LiUISetting : MonoBehaviour
         // 这里可以添加重新开始游戏的逻辑
         // 例如：重新加载场景或重置游戏状态
         Debug.Log("Again按钮被点击");
+        
+        // 重新开始游戏，而不是关闭面板
+        RestartGame();
     }
 
     // Mark按钮点击事件
@@ -170,6 +173,20 @@ public class LiUISetting : MonoBehaviour
         }
     }
 
+    // 重新开始游戏
+    void RestartGame()
+    {
+        Debug.Log("LiUISetting: 开始重新开始游戏");
+        
+        // 关闭设置面板
+        CloseSettingPanel();
+        
+        // 重新加载当前场景
+        UnityEngine.SceneManagement.SceneManager.LoadScene(
+            UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
+        );
+    }
+    
     // 关闭设置面板
     void CloseSettingPanel()
     {
